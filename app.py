@@ -94,6 +94,7 @@ def predict():
     response = requests.get(url, params=parameters)
     # Convert the response to JSON format and pretty print it
     response_json = response.json()
+    print("Length of :",response_json['totalResults'])
     if response_json['totalResults'] == 0:
         return render_template('index.html',message="Content doesn't exist for keywords")
         
@@ -168,14 +169,14 @@ def predict():
     #tfidf.fit(xtrain)
     x_tfidf = tfidf.transform(xtrain)
 
-    top_recommendations, recommended_urls, sorted_sim_scores,rec_img_url = top_articles(x_tfidf, xtrain, text_features,xtrain_urls,x_img_url,title,5)
+    top_recommendations, recommended_urls, sorted_sim_scores,rec_img_url = top_articles(x_tfidf, xtrain, text_features,xtrain_urls,x_img_url,title,10)
 
 
 
     print(prediction[0]," classified")
     print("urls:\n",recommended_urls)
     print("top",top_recommendations)
-    return render_template('index.html',sentence=request.form.get('content'),predicted=prediction[0],urls=zip(recommended_urls,rec_img_url,title))
+    return render_template('index.html',sentence=request.form.get('content'),c=prediction[0],urls=zip(recommended_urls,rec_img_url,title))
    # return features
 
 
@@ -195,7 +196,7 @@ def predict_api():
     return jsonify(output)
 
 #n = 5 is default values for number of similar articles to be found, if n= 7 is passed then 7 similar articles would be found
-def top_articles(xtrain_tfidf, xtrain, texts,xtrain_urls,x_img_url,title,n=5):
+def top_articles(xtrain_tfidf, xtrain, texts,xtrain_urls,x_img_url,title,n=10):
     
     similarity_scores = xtrain_tfidf.dot(texts.toarray().T)
     #Calculating similarity between notes and articles and scores are stored
@@ -283,4 +284,4 @@ def pre_process(text):
 
 if __name__ == "__main__":
     app.run(debug=True)
-    
+    ECHO is on.
